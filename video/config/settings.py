@@ -38,8 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'app'
+    'app',
+    # 'djcelery'
 ]
+
+# BROKER_URL = 'redis://localhost:6379/2'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/3'
+# CELERY_IMPORTS = ('app.tasks.tasks')
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -126,3 +131,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
+
+#qiniuyun
+QINIU_AK = '0CxNWeJIDwulIeP8Zu2LLPMLULOmYoEjsAU-TUHK'
+QINIU_SK = 'vhI2VcHSnwSdYiK9tWGlfqKoS9uJl7Fw_0tlyd3v'
+QINIU_VIDEO = 'lwbtest'
+QINIU_VIDEO_URL = 's001a1k3i.hb-bkt.clouddn.com'

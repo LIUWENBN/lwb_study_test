@@ -1,0 +1,6 @@
+django
+qiniu
+celery
+django-celery
+celery-with-redis
+redis

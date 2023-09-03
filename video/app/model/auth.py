@@ -35,7 +35,7 @@ class ClientUser(models.Model):
     @classmethod
     def get_user(cls, username, password):
         try:
-            user = cls.object.get(
+            user = cls.objects.get(
                 username = username,
                 password = hash_password(password)
             )

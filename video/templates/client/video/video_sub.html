@@ -1,0 +1,66 @@
+<%inherit file='../base.html' />
+<%def name="content()">
+<%
+from django.shortcuts import reverse
+from app.model.video import FromType
+from app.utils.permission import client_auth
+%>
+<img src="${video.image}" class="video-image" />
+<div class="data">
+    <p><span class="span">名称：</span><br />${video.name}</p>
+    <p>
+        <span class="span">演员：</span>
+    <ul>
+        % for person in video.video_star.all():
+        <li>${person.ident}：${person.name}</li>
+        % endfor
+    </ul>
+    </p>
+    <p>
+        <span class="span">简介</span><br />
+        <span class="info">${video.info}</span>
+    </p>
+    <p>
+        <span class="span">选集：</span><br />
+        % if FromType(video.from_to) == FromType.custom and not client_auth(request):
+        <a href="${reverse('client_auth')}">请您登录~</a>
+        %else:
+        <ul class="number-url">
+        % for data in video.video_sub.all():
+        <li><a href="${data.url}">第${data.number}集</a></li>
+        % endfor
+        % endif
+        </ul>
+    </p>
+    <p>
+        <span class="span">评论区：</span>
+    <div class="comment-area">
+        % if user:
+        <textarea id="comment-content" data-user-id="${user.id}" data-video-id="${video.id}" placeholder="请填写评论~"></textarea>${ csrf_token }
+        <button id="comment-submit" data-url="${reverse('client_add_comment')}">提交</button>
+        % else:
+        <a href="${reverse('client_auth')}">登录后可评论~</a>
+        % endif
+    </div>
+    </p>
+    <div class="comment-show-area">
+        <span class="span">评论展示：</span>
+        <div id="ajax-comment-show">
+        <ul class="comment-show">
+            %for comment in comments:
+            <li>
+                <span>${comment.content}</span>
+                <span>${comment.user.username}</span>
+            </li>
+            %endfor
+        </ul>
+        </div>
+    </div>
+</div>
+</%def>
+<%def name="css()">
+<link href="/static/client/css/video_sub.css" rel="stylesheet" />
+</%def>
+<%def name='js()'>
+<script src="/static/client/js/video_sub.js"></script>
+</%def>

@@ -1,5 +1,5 @@
 #conding=utf-8
-from django.middleware.csrf import _get_new_csrf_string, _salt_cipher_secret, _unsalt_cipher_token
+from django.middleware.csrf import _get_new_csrf_string, _mask_cipher_secret, _unmask_cipher_token
 from mako.lookup import TemplateLookup
 from django.template import RequestContext
 from django.conf import settings
@@ -32,20 +32,18 @@ def render_to_response(request, template , data=None):
         result.update(d)
 
 
-    # data['csrf_token'] = '<input type="hidden" name="csrfmiddlewaretoken" value="{0}" />'.format(request.META['CSRF_COOKIE'])
+    # result['csrf_token'] = '<input type="hidden" name="csrfmiddlewaretoken" value="{0}" />'.format(request.META['CSRF_COOKIE'])
     if 'CSRF_COOKIE' not in request.META:
         csrf_secret = _get_new_csrf_string()
-        request.META['CSRF_COOKIE'] = _salt_cipher_secret(csrf_secret)
+        request.META['CSRF_COOKIE'] = _mask_cipher_secret(csrf_secret)
         result['csrf_token'] = ('<input type="hidden" id="django-csrf-token"'
                                 ' name="csrfmiddlewaretoken" value={0}'
                                 ' />'.format(request.META['CSRF_COOKIE']))
 
     else:
-        csrf_secret = _unsalt_cipher_token(request.META["CSRF_COOKIE"])
+        csrf_secret = _unmask_cipher_token(request.META["CSRF_COOKIE"])
         result['csrf_token'] = ('<input type="hidden" id="django-csrf-token"'
                                 ' name="csrfmiddlewaretoken" value={0}'
                                 ' />'.format(request.META['CSRF_COOKIE']))
-
-    # print('request:',request.META)
     result['request'] = request
     return HttpResponse(mako_template.render(**result))
